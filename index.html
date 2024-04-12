@@ -119,16 +119,17 @@
                     <tr>\
                         <td colspan="2">' + (feature.properties['PERIODO'] !== null ? autolinker.link(feature.properties['PERIODO'].toLocaleString()) : '') + '</td>\
                     </tr>\
-                    <tr>\
-                        <td colspan="2"> TURNO: ' + (feature.properties['TURNO'] !== null ? autolinker.link(feature.properties['TURNO'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">HORÁRIO: ' + (feature.properties['HORARIO'] !== null ? autolinker.link(feature.properties['HORARIO'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">OPERAÇÃO: ' + (feature.properties['OPERACAI'] !== null ? autolinker.link(feature.properties['OPERACAI'].toLocaleString()) : '') + '</td>\
-                    </tr>\
                 </table>';
+                
+                //<tr>\
+                //    <td colspan="2"> TURNO: ' + (feature.properties['TURNO'] !== null ? autolinker.link(feature.properties['TURNO'].toLocaleString()) : '') + '</td>\
+                //</tr>\
+                //<tr>\
+                //    <td colspan="2">HORÁRIO: ' + (feature.properties['HORARIO'] !== null ? autolinker.link(feature.properties['HORARIO'].toLocaleString()) : '') + '</td>\
+                //</tr>\
+                //<tr>\
+                //    <td colspan="2">OPERAÇÃO: ' + (feature.properties['OPERACAI'] !== null ? autolinker.link(feature.properties['OPERACAI'].toLocaleString()) : '') + '</td>\
+                //</tr>\
 
 
             layer.bindPopup(popupContent, {maxHeight: 400});
