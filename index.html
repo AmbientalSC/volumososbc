@@ -32,12 +32,15 @@
             padding: 10px;
             padding-left: 10px; /* Espaço inicial da borda esquerda */
             width:265px;
+            display: none;
+        }
 
-          }
+          
         
         </style>
         <title>Consulta de setores</title>
-        <link rel="shortcut icon" type="image/jpg" href="icon.ico"/>    </head>    </head>
+        <link rel="shortcut icon" type="image/jpg" href="icon.ico"/>    
+   </head>
     <body>
         <div id="container">
         <div id="infoDiv"></div>
@@ -284,6 +287,8 @@
 
         googleGeocoder.on('markgeocode', function(event) {
             // Obtém as coordenadas do endereço pesquisado
+            document.getElementById('infoDiv').style.display = 'block';
+
             var latLng = event.geocode.center;
         
             // Inicializa variáveis para armazenar a coordenada mais próxima, a menor distância e a distância do ponto mais próximo
