@@ -18,11 +18,33 @@
             padding: 0;
             margin: 0;
         }
+        #container {
+            top: 10%;
+            position: absolute;
+            z-index: 1000; 
+            padding-left: 10px;
+        }
+        #infoDiv {
+            position: relative;
+            top: 10%;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.752);
+            padding: 10px;
+            padding-left: 10px; /* Espaço inicial da borda esquerda */
+            width:265px;
+
+          }
+        
         </style>
         <title></title>
     </head>
     <body>
+        <div id="container">
+        <div id="infoDiv"></div>
+        </div>
+        
         <div id="map">
+
         </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
@@ -76,9 +98,8 @@
         document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
           var tagName = event.target.tagName,
             popup = map._popup;
-          // Also check if flag is already set.
           if (tagName === "IMG" && popup && !popup._updated) {
-            popup._updated = true; // Set flag to prevent looping.
+            popup._updated = true; 
             popup.update();
           }
         }, true);
@@ -120,18 +141,6 @@
                         <td colspan="2">' + (feature.properties['PERIODO'] !== null ? autolinker.link(feature.properties['PERIODO'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
-                
-                //<tr>\
-                //    <td colspan="2"> TURNO: ' + (feature.properties['TURNO'] !== null ? autolinker.link(feature.properties['TURNO'].toLocaleString()) : '') + '</td>\
-                //</tr>\
-                //<tr>\
-                //    <td colspan="2">HORÁRIO: ' + (feature.properties['HORARIO'] !== null ? autolinker.link(feature.properties['HORARIO'].toLocaleString()) : '') + '</td>\
-                //</tr>\
-                //<tr>\
-                //    <td colspan="2">OPERAÇÃO: ' + (feature.properties['OPERACAI'] !== null ? autolinker.link(feature.properties['OPERACAI'].toLocaleString()) : '') + '</td>\
-                //</tr>\
-
-
             layer.bindPopup(popupContent, {maxHeight: 400});
             var popup = layer.getPopup();
             var content = popup.getContent();
@@ -272,31 +281,52 @@
         document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
         .title += 'Search for a place';
         setBounds();
-        </script>
-        <script>
-        fetch('cronograma.json')
-            .then(response => response.json())
-            .then(cronograma => {
-                // Definindo a variável "linhasTabela" dentro do bloco "fetch"
-                var linhasTabela = document.querySelectorAll("tr");
 
-                // Iterando sobre as linhas da tabela
-                linhasTabela.forEach(linha => {
-                    if (linha.innerHTML.includes("V1")) {
-                        var valorSetor = linha.textContent.split("SETOR: ")[1].trim();
-                        console.log(valorSetor);
-
-                        // Iterando sobre os itens do cronograma
-                        cronograma.forEach(item => {
-                            if (item.SETOR === valorSetor) {
-                                console.log("DATA COMPLETA:", item["DATA COMPLETA"]);
-                            }
-                        });
+        googleGeocoder.on('markgeocode', function(event) {
+            // Obtém as coordenadas do endereço pesquisado
+            var latLng = event.geocode.center;
+        
+            // Inicializa variáveis para armazenar a coordenada mais próxima, a menor distância e a distância do ponto mais próximo
+            var nearestCoordinate;
+            var shortestDistance = Infinity;
+            var nearestDistance = Infinity;
+        
+            // Itera sobre todas as coordenadas no arquivo Dissolvido_1.js
+            json_Dissolvido_1.features.forEach(function(feature) {
+                var coordinates = feature.geometry.coordinates;
+        
+                // Inicializa a menor distância como infinito para garantir que qualquer outra distância seja menor
+                var featureShortestDistance = Infinity;
+        
+                // Itera sobre todos os pontos da geometria da feature para calcular a distância
+                for (var i = 0; i < coordinates.length; i++) {
+                    for (var j = 0; j < coordinates[i].length; j++) {
+                        var distance = L.latLng(coordinates[i][j][1], coordinates[i][j][0]).distanceTo(latLng);
+        
+                        // Verifica se esta é a menor distância até agora para esta feature
+                        if (distance < featureShortestDistance) {
+                            featureShortestDistance = distance;
+                        }
                     }
-                });
-            })
-            .catch(error => console.error('Erro ao carregar o cronograma:', error));
-
+                }
+        
+                // Verifica se esta é a menor distância entre todas as features
+                if (featureShortestDistance < 1000 && featureShortestDistance < shortestDistance) {
+                    shortestDistance = featureShortestDistance;
+                    nearestCoordinate = feature;
+                    nearestDistance = featureShortestDistance;
+                }
+            });
+        
+            // Verifica se encontrou uma coordenada próxima
+            if (nearestCoordinate) {
+                document.getElementById("infoDiv").innerHTML = 
+                "<b>DIGITE A RUA + N° DA RESIDENCIA PARA UMA MELHOR PRECISÃO DE INFORMAÇÕES.</b>" + "<br>"+ "<br>" +
+                "<b>Coleta de volumosos:</b>" + "<br>" +
+                "Setor: " + nearestCoordinate.properties.SETOR + "<br>" +
+                "" + nearestCoordinate.properties.PERIODO + "<br>"
+            }
+        });
 
         </script>
     </body>
