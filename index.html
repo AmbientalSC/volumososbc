@@ -312,8 +312,6 @@
         .title += 'Search for a place';
         setBounds();
 
-
-
         googleGeocoder.on('markgeocode', function(event) {
             // Obtém as coordenadas do endereço pesquisado
             document.getElementById('infoDiv').style.display = 'block';
@@ -378,7 +376,6 @@
             datasFiltradas.sort(function(a, b) {
                 return new Date(a.DATA) - new Date(b.DATA);
             });
-
         
             //pega as duas primeiras datas filtradas (se tiver duas)
             var duasProximasDatas = datasFiltradas.slice(0, 2).map(function(item) {
@@ -389,7 +386,7 @@
                 "<b>DIGITE A RUA + N° DA RESIDENCIA PARA UMA MELHOR PRECISÃO DE INFORMAÇÕES.</b>" + "<br>" + "<br>" +
                 "<b>Coleta de volumosos:</b>" + "<br>" +
                 "Setor: " + nearestCoordinate.properties.SETOR + "<br>" +
-                "Próximas coletas: <br>-" + (duasProximasDatas.length > 0 ? duasProximasDatas.join("<br>") : "Nenhuma data futura encontrada para este setor.");
+                "Próximas coletas: <br>-" + (duasProximasDatas.length > 0 ? duasProximasDatas.join("<br>-") : "Nenhuma data futura encontrada para este setor.");
         });
                 
         </script>
