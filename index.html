@@ -62,6 +62,33 @@
         <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
         <script src="data/Dissolvido_1.js"></script>      
         <script>
+
+        // Variável que vai armazenar o cronograma
+        var cronograma;
+
+        // Função para carregar o arquivo JSON do cronograma
+        function carregarCronograma() {
+            // Caminho do arquivo JSON (se estiver na mesma pasta do index.html, basta o nome do arquivo)
+            var arquivoJson = 'cronograma.json';
+
+            // Faz a requisição para carregar o arquivo JSON
+            fetch(arquivoJson)
+                .then(function(response) {
+                    return response.json(); // Converte a resposta para JSON
+                })
+                .then(function(data) {
+                    // Armazena os dados do JSON na variável cronograma
+                    cronograma = data;
+                    console.log('Cronograma carregado:', cronograma); // Exibe o cronograma no console (para verificação)
+                })
+                .catch(function(error) {
+                    console.error('Erro ao carregar o cronograma:', error);
+                });
+        }
+
+        // Chamada da função para carregar o cronograma ao carregar a página
+        carregarCronograma();
+
         var highlightLayer;
         function highlightFeature(e) {
             highlightLayer = e.target;
@@ -285,10 +312,14 @@
         .title += 'Search for a place';
         setBounds();
 
+
+
         googleGeocoder.on('markgeocode', function(event) {
             // Obtém as coordenadas do endereço pesquisado
             document.getElementById('infoDiv').style.display = 'block';
+            document.getElementById("infoDiv").innerHTML = "";
 
+        
             var latLng = event.geocode.center;
         
             // Inicializa variáveis para armazenar a coordenada mais próxima, a menor distância e a distância do ponto mais próximo
@@ -296,26 +327,32 @@
             var shortestDistance = Infinity;
             var nearestDistance = Infinity;
         
-            // Itera sobre todas as coordenadas no arquivo Dissolvido_1.js
+            //obtém a data atual
+            var dataAtual = new Date();
+            var dataAtualFormatada = dataAtual.toLocaleDateString('pt-BR'); // Formata a data atual para DD/MM/AAAA
+        
+            var proximasDatas = [];
+        
+            //itera sobre as features no arquivo Dissolvido_1.js
             json_Dissolvido_1.features.forEach(function(feature) {
                 var coordinates = feature.geometry.coordinates;
         
-                // Inicializa a menor distância como infinito para garantir que qualquer outra distância seja menor
+                //inicializa a menor distância como infinito para garantir que qualquer outra distância seja menor
                 var featureShortestDistance = Infinity;
         
-                // Itera sobre todos os pontos da geometria da feature para calcular a distância
+                //itera sobre todos os pontos da geometria da feature para calcular a distância
                 for (var i = 0; i < coordinates.length; i++) {
                     for (var j = 0; j < coordinates[i].length; j++) {
                         var distance = L.latLng(coordinates[i][j][1], coordinates[i][j][0]).distanceTo(latLng);
         
-                        // Verifica se esta é a menor distância até agora para esta feature
+                        //vVerifica se esta é a menor distância até agora para esta feature
                         if (distance < featureShortestDistance) {
                             featureShortestDistance = distance;
                         }
                     }
                 }
         
-                // Verifica se esta é a menor distância entre todas as features
+                //verifica se esta é a menor distância entre todas as features
                 if (featureShortestDistance < 1000 && featureShortestDistance < shortestDistance) {
                     shortestDistance = featureShortestDistance;
                     nearestCoordinate = feature;
@@ -323,16 +360,38 @@
                 }
             });
         
-            // Verifica se encontrou uma coordenada próxima
-            if (nearestCoordinate) {
-                document.getElementById("infoDiv").innerHTML = 
-                "<b>DIGITE A RUA + N° DA RESIDENCIA PARA UMA MELHOR PRECISÃO DE INFORMAÇÕES.</b>" + "<br>"+ "<br>" +
+            //filtra os dados do cronograma para encontrar as datas futuras com o mesmo setor
+            var datasFiltradas = cronograma.filter(function(item) {
+                var dataItem = item.DATA.split('/'); 
+                var diaItem = parseInt(dataItem[0], 10);
+                var mesItem = parseInt(dataItem[1], 10) - 1; //mês é base 0 no JavaScript
+                var anoItem = parseInt(dataItem[2], 10);
+
+                //cria uma nova data com a data do item
+                var dataItemFormatada = new Date(anoItem, mesItem, diaItem);
+
+                //compara se a data do item é posterior à data atual
+                return item.SETOR === nearestCoordinate.properties.SETOR && dataItemFormatada > dataAtual;
+            });
+
+            //ordena as datas filtradas pela data mais próxima
+            datasFiltradas.sort(function(a, b) {
+                return new Date(a.DATA) - new Date(b.DATA);
+            });
+
+        
+            //pega as duas primeiras datas filtradas (se tiver duas)
+            var duasProximasDatas = datasFiltradas.slice(0, 2).map(function(item) {
+                return item['DATA COMPLETA'];
+            });
+        
+            document.getElementById("infoDiv").innerHTML =
+                "<b>DIGITE A RUA + N° DA RESIDENCIA PARA UMA MELHOR PRECISÃO DE INFORMAÇÕES.</b>" + "<br>" + "<br>" +
                 "<b>Coleta de volumosos:</b>" + "<br>" +
                 "Setor: " + nearestCoordinate.properties.SETOR + "<br>" +
-                "" + nearestCoordinate.properties.PERIODO + "<br>"
-            }
+                "Próximas coletas: <br>-" + (duasProximasDatas.length > 0 ? duasProximasDatas.join("<br>") : "Nenhuma data futura encontrada para este setor.");
         });
-
+                
         </script>
     </body>
 </html>

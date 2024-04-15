@@ -11,7 +11,7 @@ var json_Dissolvido_1 = {
         "type": "Feature",
         "properties": {
             "SETOR": "V5",
-            "PERIODO": "- quarta-feira, 24 de abril de 2024 <br> - quinta-feira, 25 de abril de 2024<br>",
+            "PERIODO": "",
             "HORARIO": "06:00 ÀS 14:20",
             "OPERACAI": "VOLUMOSOS",
             "TURNO": "MANHÃ"
@@ -2339,7 +2339,7 @@ var json_Dissolvido_1 = {
         "type": "Feature",
         "properties": {
             "SETOR": "V6",
-            "PERIODO": "- sexta-feira, 26 de abril de 2024 <br> - sábado, 27 de abril de 2024<br>",
+            "PERIODO": "",
             "HORARIO": "06:00 ÀS 14:20",
             "OPERACAI": "VOLUMOSOS",
             "TURNO": "MANHÃ"
@@ -7328,7 +7328,7 @@ var json_Dissolvido_1 = {
         "type": "Feature",
         "properties": {
             "SETOR": "V3",
-            "PERIODO": "- sexta-feira, 19 de abril de 2024 <br>- sábado, 20 de abril de 2024<br>",
+            "PERIODO": "",
             "HORARIO": "06:00 ÀS 14:20",
             "OPERACAI": "VOLUMOSOS",
             "TURNO": "MANHÃ"
@@ -8763,7 +8763,7 @@ var json_Dissolvido_1 = {
         "type": "Feature",
         "properties": {
             "SETOR": "V4",
-            "PERIODO": "- sexta-feira, 19 de abril de 2024 <br> - sábado, 20 de abril de 2024<br>",
+            "PERIODO": "",
             "HORARIO": "06:00 ÀS 14:20",
             "OPERACAI": "VOLUMOSOS",
             "TURNO": "MANHÃ"
@@ -12149,7 +12149,7 @@ var json_Dissolvido_1 = {
         "type": "Feature",
         "properties": {
             "SETOR": "V1",
-            "PERIODO": "- segunda-feira, 15 de abril de 2024 <br> - terça-feira, 16 de abril de 2024<br>",
+            "PERIODO": "",
             "HORARIO": "06:00 ÀS 14:20",
             "OPERACAI": "VOLUMOSOS",
             "TURNO": "MANHÃ"
@@ -16057,7 +16057,7 @@ var json_Dissolvido_1 = {
         "type": "Feature",
         "properties": {
             "SETOR": "V2",
-            "PERIODO": "- quarta-feira, 17 de abril de 2024 <br> - quinta-feira, 18 de abril de 2024<br>",
+            "PERIODO": "",
             "HORARIO": "06:00 ÀS 14:20",
             "OPERACAI": "VOLUMOSOS",
             "TURNO": "MANHÃ"
