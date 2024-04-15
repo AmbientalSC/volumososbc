@@ -316,19 +316,13 @@
             // Obtém as coordenadas do endereço pesquisado
             document.getElementById('infoDiv').style.display = 'block';
             document.getElementById("infoDiv").innerHTML = "";
-
         
-            var latLng = event.geocode.center;
-        
-            // Inicializa variáveis para armazenar a coordenada mais próxima, a menor distância e a distância do ponto mais próximo
+            var latLng = event.geocode.center;        
             var nearestCoordinate;
             var shortestDistance = Infinity;
-            var nearestDistance = Infinity;
-        
-            //obtém a data atual
+            var nearestDistance = Infinity;        
             var dataAtual = new Date();
             var dataAtualFormatada = dataAtual.toLocaleDateString('pt-BR'); // Formata a data atual para DD/MM/AAAA
-        
             var proximasDatas = [];
         
             //itera sobre as features no arquivo Dissolvido_1.js
@@ -348,16 +342,14 @@
                             featureShortestDistance = distance;
                         }
                     }
-                }
-        
+                }        
                 //verifica se esta é a menor distância entre todas as features
                 if (featureShortestDistance < 1000 && featureShortestDistance < shortestDistance) {
                     shortestDistance = featureShortestDistance;
                     nearestCoordinate = feature;
                     nearestDistance = featureShortestDistance;
                 }
-            });
-        
+            });        
             //filtra os dados do cronograma para encontrar as datas futuras com o mesmo setor
             var datasFiltradas = cronograma.filter(function(item) {
                 var dataItem = item.DATA.split('/'); 
@@ -387,8 +379,7 @@
                 "<b>Coleta de volumosos:</b>" + "<br>" +
                 "Setor: " + nearestCoordinate.properties.SETOR + "<br>" +
                 "Próximas coletas: <br>-" + (duasProximasDatas.length > 0 ? duasProximasDatas.join("<br>-") : "Nenhuma data futura encontrada para este setor.");
-        });
-                
+        });                
         </script>
     </body>
 </html>
