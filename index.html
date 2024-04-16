@@ -63,10 +63,7 @@
         <script src="data/Dissolvido_1.js"></script>      
         <script>
 
-        //variável que vai armazenar o cronograma
         var cronograma;
-
-        //função para carregar o arquivo JSON do cronograma
         function carregarCronograma() {
             //caminho do arquivo JSON (se estiver na mesma pasta do index.html, basta o nome do arquivo)
             var arquivoJson = 'data/cronograma.json';
@@ -79,7 +76,6 @@
                 .then(function(data) {
                     //armazena os dados do JSON na variável cronograma
                     cronograma = data;
-                    console.log('Cronograma carregado:', cronograma); // Exibe o cronograma no console (para verificação)
                 })
                 .catch(function(error) {
                     console.error('Erro ao carregar o cronograma:', error);
