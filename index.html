@@ -63,21 +63,21 @@
         <script src="data/Dissolvido_1.js"></script>      
         <script>
 
-        // Variável que vai armazenar o cronograma
+        //variável que vai armazenar o cronograma
         var cronograma;
 
-        // Função para carregar o arquivo JSON do cronograma
+        //função para carregar o arquivo JSON do cronograma
         function carregarCronograma() {
-            // Caminho do arquivo JSON (se estiver na mesma pasta do index.html, basta o nome do arquivo)
-            var arquivoJson = 'cronograma.json';
+            //caminho do arquivo JSON (se estiver na mesma pasta do index.html, basta o nome do arquivo)
+            var arquivoJson = 'data/cronograma.json';
 
-            // Faz a requisição para carregar o arquivo JSON
+            //faz a requisição para carregar o arquivo JSON
             fetch(arquivoJson)
                 .then(function(response) {
                     return response.json(); // Converte a resposta para JSON
                 })
                 .then(function(data) {
-                    // Armazena os dados do JSON na variável cronograma
+                    //armazena os dados do JSON na variável cronograma
                     cronograma = data;
                     console.log('Cronograma carregado:', cronograma); // Exibe o cronograma no console (para verificação)
                 })
@@ -86,7 +86,7 @@
                 });
         }
 
-        // Chamada da função para carregar o cronograma ao carregar a página
+        //chamada da função para carregar o cronograma ao carregar a página
         carregarCronograma();
 
         var highlightLayer;
@@ -158,7 +158,7 @@
                         }
                     }
                 },
-                // mouseover: highlightFeature,
+                //mouseover: highlightFeature,
             });
 
             var dataAtual = new Date().toLocaleDateString('pt-BR');     
@@ -313,7 +313,7 @@
         setBounds();
 
         googleGeocoder.on('markgeocode', function(event) {
-            // Obtém as coordenadas do endereço pesquisado
+            //pega coordenadas do endereço pesquisado
             document.getElementById('infoDiv').style.display = 'block';
             document.getElementById("infoDiv").innerHTML = "";
         
@@ -322,7 +322,7 @@
             var shortestDistance = Infinity;
             var nearestDistance = Infinity;        
             var dataAtual = new Date();
-            var dataAtualFormatada = dataAtual.toLocaleDateString('pt-BR'); // Formata a data atual para DD/MM/AAAA
+            var dataAtualFormatada = dataAtual.toLocaleDateString('pt-BR'); //formata a data atual para DD/MM/AAAA
             var proximasDatas = [];
         
             //itera sobre as features no arquivo Dissolvido_1.js
@@ -337,7 +337,7 @@
                     for (var j = 0; j < coordinates[i].length; j++) {
                         var distance = L.latLng(coordinates[i][j][1], coordinates[i][j][0]).distanceTo(latLng);
         
-                        //vVerifica se esta é a menor distância até agora para esta feature
+                        //verifica se esta é a menor distância até agora para esta feature
                         if (distance < featureShortestDistance) {
                             featureShortestDistance = distance;
                         }
