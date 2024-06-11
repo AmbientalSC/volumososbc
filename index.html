@@ -17,37 +17,63 @@
             height: 100%;
             padding: 0;
             margin: 0;
+        }        
+        #menu {
+            position: absolute;
+            top: 7%;
+            left: 120px;
+            transform: translate(-50%, -50%);
+            z-index: 1000; /* Certifique-se de que o menu esteja na frente do mapa */
+            background-color: rgba(255, 255, 255, 0.752);
+            padding: 5px;
+            border-radius: 10px;
+            /* height:60px; */
+        }
+        #aviso {
+            position: absolute;
+            top: 8%;
+            left: 15%;
+            transform: translate(-50%, -50%);
+            z-index: 1000; /* Certifique-se de que o menu esteja na frente do mapa */
+            background-color: rgba(255, 255, 255, 0.752);
+            padding: 5px;
+            border-radius: 10px;
+            /* height:60px; */
         }
         #container {
-            top: 10%;
+            top: 22%;
             position: absolute;
             z-index: 1000; 
             padding-left: 10px;
         }
-        #infoDiv {
-            position: relative;
-            top: 10%;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.752);
-            padding: 10px;
-            padding-left: 10px; /* Espaço inicial da borda esquerda */
-            width:265px;
-            display: none;
+
+            #infoDiv2 {
+                position: relative;
+                top: 20%;
+                border-radius: 10px;
+                background-color: rgba(255, 255, 255, 0.752);
+                padding: 10px;
+                padding-left: 10px; /* Espaço inicial da borda esquerda */
+                width: 265px;
+                display: none;
+            }
+        @media only screen and (max-width: 600px) {
+            #aviso {
+                width: 90%; /* Define a largura como 90% da largura da tela em dispositivos com largura de tela de até 600 pixels */
+                left: 50%;
+                top: 24%;
+                transform: translate(-50%, -50%);
+            }
         }
-
-          
-        
         </style>
-        <title>Consulta de setores</title>
-        <link rel="shortcut icon" type="image/jpg" href="icon.ico"/>    
-   </head>
+        <title>Consulta de setores - Xanxere</title>
+        <link rel="shortcut icon" type="image/jpg" href="icon.ico"/>    </head>
     <body>
+        <div id="aviso">1 - Pesquise por Rua, N° e Cidade<br>2 - Clique na linha sobre a rua, no local mais próximo à sua pesquisa</div>
         <div id="container">
-        <div id="infoDiv"></div>
+            <div id="infoDiv2"></div>
         </div>
-        
-        <div id="map">
-
+        <div id="map"></div>
         </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
@@ -60,31 +86,8 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
-        <script src="data/Dissolvido_1.js"></script>      
+        <script src="data/Dissolvido_1.js"></script>
         <script>
-
-        var cronograma;
-        function carregarCronograma() {
-            //caminho do arquivo JSON (se estiver na mesma pasta do index.html, basta o nome do arquivo)
-            var arquivoJson = 'data/cronograma.json';
-
-            //faz a requisição para carregar o arquivo JSON
-            fetch(arquivoJson)
-                .then(function(response) {
-                    return response.json(); // Converte a resposta para JSON
-                })
-                .then(function(data) {
-                    //armazena os dados do JSON na variável cronograma
-                    cronograma = data;
-                })
-                .catch(function(error) {
-                    console.error('Erro ao carregar o cronograma:', error);
-                });
-        }
-
-        //chamada da função para carregar o cronograma ao carregar a página
-        carregarCronograma();
-
         var highlightLayer;
         function highlightFeature(e) {
             highlightLayer = e.target;
@@ -92,8 +95,6 @@
             if (e.target.feature.geometry.type === 'LineString' || e.target.feature.geometry.type === 'MultiLineString') {
               highlightLayer.setStyle({
                 color: '#ffff00',
-                fillOpacity: 1
-
               });
             } else {
               highlightLayer.setStyle({
@@ -104,9 +105,9 @@
         }
         var map = L.map('map', {
             zoomControl:false, maxZoom:20, minZoom:1
-        }).fitBounds([[-27.091835148571462,-48.732993072574786],[-26.922163515407263,-48.492284219501485]]);
+        }).fitBounds([[-27.026057089976586,-48.65160527898569],[-26.964739696870947,-48.58012988401014]]);
         var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        map.attributionControl.setPrefix('<a href="https://github.com/AlyssonKrombauer/" target="_blank">Alysson Krombauer</a> &middot; <a href="https://ambiental.sc/" title="Ambiental.sc">Ambiental.sc</a> &middot;');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         function removeEmptyRowsFromPopupContent(content, feature) {
          var tempDiv = document.createElement('div');
@@ -124,8 +125,9 @@
         document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
           var tagName = event.target.tagName,
             popup = map._popup;
+          // Also check if flag is already set.
           if (tagName === "IMG" && popup && !popup._updated) {
-            popup._updated = true; 
+            popup._updated = true; // Set flag to prevent looping.
             popup.update();
           }
         }, true);
@@ -154,17 +156,20 @@
                         }
                     }
                 },
-                //mouseover: highlightFeature,
+                mouseover: highlightFeature,
             });
-
-            var dataAtual = new Date().toLocaleDateString('pt-BR');     
-
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">SETOR: ' + (feature.properties['SETOR'] !== null ? autolinker.link(feature.properties['SETOR'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">SETOR</th>\
+                        <td>' + (feature.properties['SETOR'] !== null ? autolinker.link(feature.properties['SETOR'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['PERIODO'] !== null ? autolinker.link(feature.properties['PERIODO'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">FREQUENCIA</th>\
+                        <td>' + (feature.properties['FREQUENCIA'] !== null ? autolinker.link(feature.properties['FREQUENCIA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TURNO</th>\
+                        <td>' + (feature.properties['TURNO'] !== null ? autolinker.link(feature.properties['TURNO'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
@@ -173,108 +178,83 @@
             var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
             popup.setContent(updatedContent);
         }
+
         function style_Dissolvido_1_0(feature) {
-            switch(String(feature.properties['SETOR'])) {
-                case 'SEM COLETA':
+            switch(String(feature.properties['FREQUENCIA'])) {
+                case 'SEGUNDA-FEIRA':
                     return {
                 pane: 'pane_Dissolvido_1',
                 opacity: 1,
-                color: 'rgba(204,204,204,1.0)',
+                color: 'rgba(205,67,55,1.0)',
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
-                weight: 4.0,
+                weight: 3.0,
                 fillOpacity: 0,
                 interactive: true,
             }
                     break;
-                case 'V1':
+                case 'TERÇA-FEIRA':
                     return {
                 pane: 'pane_Dissolvido_1',
                 opacity: 1,
-                color: 'rgba(190, 255, 78,1.0)',
+                color: 'rgba(79,141,203,1.0)',
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
-                weight: 4.0,
+                weight: 3.0,
                 fillOpacity: 0,
                 interactive: true,
             }
                     break;
-                case 'V2':
+                case 'QUARTA-FEIRA':
                     return {
                 pane: 'pane_Dissolvido_1',
                 opacity: 1,
-                color: 'rgba(147, 197, 61,1.0)',
+                color: 'rgba(136,224,193,1.0)',
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
-                weight: 4.0,
+                weight: 3.0,
                 fillOpacity: 0,
                 interactive: true,
             }
                     break;
-                case 'V3':
+                case 'QUINTA-FEIRA':
                     return {
                 pane: 'pane_Dissolvido_1',
                 opacity: 1,
-                color: 'rgba(205, 136, 215,1.0)',
+                color: 'rgba(224,212,49,1.0)',
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
-                weight: 4.0,
+                weight: 3.0,
                 fillOpacity: 0,
                 interactive: true,
             }
                     break;
-                case 'V4':
+                case 'SEXTA-FEIRA':
                     return {
                 pane: 'pane_Dissolvido_1',
                 opacity: 1,
-                color: 'rgba(173, 132, 64,1.0)',
+                color: 'rgba(143,94,235,1.0)',
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
-                weight: 4.0,
+                weight: 3.0,
                 fillOpacity: 0,
                 interactive: true,
             }
                     break;
-                case 'V5':
+                case 'SABADO':
                     return {
                 pane: 'pane_Dissolvido_1',
                 opacity: 1,
-                color: 'rgba(199, 61, 106,1.0)',
+                color: 'rgba(240,75,202,1.0)',
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
-                weight: 4.0,
-                fillOpacity: 0,
-                interactive: true,
-            }
-                    break;
-                case 'V6':
-                    return {
-                pane: 'pane_Dissolvido_1',
-                opacity: 1,
-                color: 'rgba(90, 183, 255,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 4.0,
-                fillOpacity: 0,
-                interactive: true,
-            }
-                    break;
-                default:
-                    return {
-                pane: 'pane_Dissolvido_1',
-                opacity: 1,
-                color: 'rgba(58,220,26,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 4.0,
+                weight: 3.0,
                 fillOpacity: 0,
                 interactive: true,
             }
@@ -306,76 +286,86 @@
         .className += ' fa fa-search';
         document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
         .title += 'Search for a place';
+        var baseMaps = {};
+        var overlaysTree = [
+            {label: 'Dissolvido<br /><table><tr><td style="text-align: center;"><img src="legend/Dissolvido_1_SEGUNDAFEIRA0.png" /></td><td>SEGUNDA-FEIRA</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolvido_1_TERÇAFEIRA1.png" /></td><td>TERÇA-FEIRA</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolvido_1_QUARTAFEIRA2.png" /></td><td>QUARTA-FEIRA</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolvido_1_QUINTAFEIRA3.png" /></td><td>QUINTA-FEIRA</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolvido_1_SEXTAFEIRA4.png" /></td><td>SEXTA-FEIRA</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolvido_1_SABADO5.png" /></td><td>SABADO</td></tr></table>', layer: layer_Dissolvido_1},
+            {label: "OpenStreetMap", layer: layer_OpenStreetMap_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
         setBounds();
 
         googleGeocoder.on('markgeocode', function(event) {
-            //pega coordenadas do endereço pesquisado
-            document.getElementById('infoDiv').style.display = 'block';
-            document.getElementById("infoDiv").innerHTML = "";
+            document.getElementById('infoDiv2').style.display = 'block';
+            document.getElementById("infoDiv2").innerHTML = "";
+
+            // Obtém as coordenadas do endereço pesquisado
+            var latLng = event.geocode.center;
+
+            console.log(event.geocode.center)
         
-            var latLng = event.geocode.center;        
+            // Inicializa variáveis para armazenar a coordenada mais próxima, a menor distância e a distância do ponto mais próximo
             var nearestCoordinate;
             var shortestDistance = Infinity;
-            var nearestDistance = Infinity;        
-            var dataAtual = new Date();
-            var dataAtualFormatada = dataAtual.toLocaleDateString('pt-BR'); //formata a data atual para DD/MM/AAAA
-            var proximasDatas = [];
+            var nearestDistance = Infinity;
+            var address = event.geocode.name;
+
         
-            //itera sobre as features no arquivo Dissolvido_1.js
+            // Itera sobre todas as coordenadas no arquivo Dissolvido_1.js
             json_Dissolvido_1.features.forEach(function(feature) {
                 var coordinates = feature.geometry.coordinates;
         
-                //inicializa a menor distância como infinito para garantir que qualquer outra distância seja menor
+                // Inicializa a menor distância como infinito para garantir que qualquer outra distância seja menor
                 var featureShortestDistance = Infinity;
         
-                //itera sobre todos os pontos da geometria da feature para calcular a distância
+                // Itera sobre todos os pontos da geometria da feature para calcular a distância
                 for (var i = 0; i < coordinates.length; i++) {
                     for (var j = 0; j < coordinates[i].length; j++) {
                         var distance = L.latLng(coordinates[i][j][1], coordinates[i][j][0]).distanceTo(latLng);
         
-                        //verifica se esta é a menor distância até agora para esta feature
+                        // Verifica se esta é a menor distância até agora para esta feature
                         if (distance < featureShortestDistance) {
                             featureShortestDistance = distance;
                         }
                     }
-                }        
-                //verifica se esta é a menor distância entre todas as features
-                if (featureShortestDistance < 1000 && featureShortestDistance < shortestDistance) {
+                }
+        
+                // Verifica se esta é a menor distância entre todas as features
+                if (featureShortestDistance < 500 && featureShortestDistance < shortestDistance) {
                     shortestDistance = featureShortestDistance;
                     nearestCoordinate = feature;
                     nearestDistance = featureShortestDistance;
                 }
-            });        
-            //filtra os dados do cronograma para encontrar as datas futuras com o mesmo setor
-            var datasFiltradas = cronograma.filter(function(item) {
-                var dataItem = item.DATA.split('/'); 
-                var diaItem = parseInt(dataItem[0], 10);
-                var mesItem = parseInt(dataItem[1], 10) - 1; //mês é base 0 no JavaScript
-                var anoItem = parseInt(dataItem[2], 10);
-
-                //cria uma nova data com a data do item
-                var dataItemFormatada = new Date(anoItem, mesItem, diaItem);
-
-                //compara se a data do item é posterior à data atual
-                return item.SETOR === nearestCoordinate.properties.SETOR && dataItemFormatada > dataAtual;
-            });
-
-            //ordena as datas filtradas pela data mais próxima
-            datasFiltradas.sort(function(a, b) {
-                return new Date(a.DATA) - new Date(b.DATA);
             });
         
-            //pega as duas primeiras datas filtradas (se tiver duas)
-            var duasProximasDatas = datasFiltradas.slice(0, 2).map(function(item) {
-                return item['DATA COMPLETA'];
-            });
-        
-            document.getElementById("infoDiv").innerHTML =
-                "<b>DIGITE A RUA + N° DA RESIDENCIA PARA UMA MELHOR PRECISÃO DE INFORMAÇÕES.</b>" + "<br>" + "<br>" +
-                "<b>Coleta de volumosos:</b>" + "<br>" +
+            // Verifica se encontrou uma coordenada próxima
+            if (nearestCoordinate) {
+                document.getElementById("infoDiv2").innerHTML = 
+                "<b>Logradouro:</b> " + address + "<br>" + "<br>" +
                 "Setor: " + nearestCoordinate.properties.SETOR + "<br>" +
-                "Próximas coletas: <br>-" + (duasProximasDatas.length > 0 ? duasProximasDatas.join("<br>-") : "Nenhuma data futura encontrada para este setor.");
-        });                
+                "Frequência: " + nearestCoordinate.properties.FREQUENCIA + "<br>" +
+                "Horário: " + nearestCoordinate.properties.TURNO + "<br>";
+            }
+        });
+
+
+        resetLabels([layer_Dissolvido_1]);
+        map.on("zoomend", function(){
+            resetLabels([layer_Dissolvido_1]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_Dissolvido_1]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_Dissolvido_1]);
+        });
         </script>
     </body>
 </html>
