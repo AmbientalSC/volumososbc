@@ -297,7 +297,7 @@
             //openedSymbol: '&#8863; &#x1f5c1;',
             //collapseAll: 'Collapse all',
             //expandAll: 'Expand all',
-            collapsed: false, 
+            collapsed: true, 
         });
         lay.addTo(map);
         setBounds();
@@ -335,8 +335,7 @@
                             featureShortestDistance = distance;
                         }
                     }
-                }
-        
+                }        
                 // Verifica se esta é a menor distância entre todas as features
                 if (featureShortestDistance < 500 && featureShortestDistance < shortestDistance) {
                     shortestDistance = featureShortestDistance;
@@ -354,8 +353,6 @@
                 "Horário: " + nearestCoordinate.properties.TURNO + "<br>";
             }
         });
-
-
         resetLabels([layer_Dissolvido_1]);
         map.on("zoomend", function(){
             resetLabels([layer_Dissolvido_1]);
