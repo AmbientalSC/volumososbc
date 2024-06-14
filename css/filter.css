@@ -9,19 +9,19 @@
     padding: 5px;
     border-radius: 10px;
     /* height:60px; */
-  }
-  #aviso {
+}
+#aviso {
     position: absolute;
-    top: 6%;
-    left: 33%;
+    top: 8%;
+    left: 13%;
     transform: translate(-50%, -50%);
     z-index: 1000; /* Certifique-se de que o menu esteja na frente do mapa */
     background-color: rgba(255, 255, 255, 0.752);
     padding: 5px;
     border-radius: 10px;
     /* height:60px; */
-  }
-  #container {
+}
+#container {
     top: 22%;
     position: absolute;
     z-index: 1000; 
@@ -38,11 +38,11 @@
         width: 265px;
         display: none;
     }
-  @media only screen and (max-width: 600px) {
+@media only screen and (max-width: 600px) {
     #aviso {
-        width: 90%; /* Define a largura como 90% da largura da tela em dispositivos com largura de tela de até 600 pixels */
-        left: 50%;
-        top: 24%;
+        width: 77%; /* Define a largura como 90% da largura da tela em dispositivos com largura de tela de até 600 pixels */
+        left: 42%;
+        top: 6%;
         transform: translate(-50%, -50%);
     }
 }
